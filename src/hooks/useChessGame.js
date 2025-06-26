@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { createInitialBoard, isValidChessMove, getValidMovesForPiece, isInCheck, isCheckmate } from '../utils/chessLogic'
+import settingsService from '../services/settingsService'
 
 export const useChessGame = () => {
-  const [gameState, setGameState] = useState(() => ({
+const [gameState, setGameState] = useState(() => ({
     board: createInitialBoard(),
     currentPlayer: 'white',
     selectedSquare: null,
@@ -14,6 +15,28 @@ export const useChessGame = () => {
     moveHistory: []
   }))
 
+  const [settings, setSettings] = useState({
+    difficulty: 'intermediate',
+    timeControl: 'rapid',
+    playerName: '',
+    autoSave: true,
+    showHints: true,
+    animationSpeed: 'normal'
+  })
+
+  // Load settings on component mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const loadedSettings = await settingsService.getSettings()
+        setSettings(loadedSettings)
+      } catch (error) {
+        console.error('Failed to load settings:', error)
+      }
+    }
+    
+    loadSettings()
+  }, [])
   const makeMove = useCallback((fromRow, fromCol, toRow, toCol) => {
     const newBoard = gameState.board.map(row => [...row])
     const piece = newBoard[fromRow][fromCol]
@@ -169,7 +192,22 @@ export const useChessGame = () => {
       winner: savedState.winner,
       moveHistory: savedState.moveHistory || []
     })
+}, [])
+
+  const updateSettings = useCallback(async (newSettings) => {
+    try {
+      const updatedSettings = await settingsService.updateSettings(newSettings)
+      setSettings(updatedSettings)
+      return updatedSettings
+    } catch (error) {
+      console.error('Failed to update settings:', error)
+      throw error
+    }
   }, [])
+
+  const getSettings = useCallback(() => {
+    return settings
+  }, [settings])
 
   return {
     gameState,
@@ -179,6 +217,9 @@ export const useChessGame = () => {
     getValidMoves,
     isValidMove,
     saveGameState,
-    loadGameState
+    loadGameState,
+    settings,
+    updateSettings,
+    getSettings
   }
 }

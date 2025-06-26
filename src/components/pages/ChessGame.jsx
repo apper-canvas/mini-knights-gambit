@@ -5,11 +5,12 @@ import ChessBoard from '../organisms/ChessBoard'
 import GameStatus from '../molecules/GameStatus'
 import CapturedPieces from '../molecules/CapturedPieces'
 import GameControls from '../organisms/GameControls'
+import SettingsModal from '../molecules/SettingsModal'
 import { useChessGame } from '../../hooks/useChessGame'
 import ApperIcon from '../atoms/ApperIcon'
 
 const ChessGame = () => {
-  const {
+const {
     gameState,
     makeMove,
     resetGame,
@@ -17,13 +18,15 @@ const ChessGame = () => {
     isValidMove,
     getValidMoves,
     saveGameState,
-    loadGameState
+    loadGameState,
+    settings,
+    updateSettings
   } = useChessGame()
 
   const [draggedPiece, setDraggedPiece] = useState(null)
   const [draggedFrom, setDraggedFrom] = useState(null)
   const [moveHistory, setMoveHistory] = useState([])
-
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
   // Handle square clicks
   const handleSquareClick = useCallback((row, col) => {
     const piece = gameState.board[row][col]
@@ -172,7 +175,20 @@ const ChessGame = () => {
       }
     } catch (error) {
       toast.error("Failed to load game")
-    }
+}
+  }
+
+  const handleOpenSettings = () => {
+    setShowSettingsModal(true)
+  }
+
+  const handleCloseSettings = () => {
+    setShowSettingsModal(false)
+  }
+
+  const handleSettingsUpdate = (newSettings) => {
+    updateSettings(newSettings)
+    toast.success('Settings updated successfully!')
   }
 
   const gameInProgress = moveHistory.length > 0 && !gameState.gameOver
@@ -242,13 +258,14 @@ const ChessGame = () => {
               title="White Captured"
             />
             
-            <GameControls
+<GameControls
               onNewGame={handleNewGame}
               gameInProgress={gameInProgress}
               onUndo={handleUndo}
               canUndo={canUndo}
               onSaveGame={handleSaveGame}
               onLoadGame={handleLoadGame}
+              onOpenSettings={handleOpenSettings}
             />
           </div>
         </div>
@@ -262,7 +279,14 @@ const ChessGame = () => {
         >
           <p>Built with React • Tailwind CSS • Framer Motion</p>
         </motion.footer>
-      </div>
+</div>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={handleCloseSettings}
+        onSettingsUpdate={handleSettingsUpdate}
+      />
     </div>
   )
 }

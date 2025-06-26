@@ -8,7 +8,8 @@ const GameControls = ({
   onUndo, 
   canUndo, 
   onSaveGame, 
-  onLoadGame 
+  onLoadGame,
+  onOpenSettings 
 }) => {
   const handleNewGame = () => {
     if (gameInProgress) {
@@ -71,8 +72,17 @@ const GameControls = ({
           >
             <ApperIcon name="Upload" size={16} />
             <span>Load</span>
-          </Button>
+</Button>
         </div>
+        
+        <Button
+          variant="ghost"
+          className="w-full flex items-center justify-center space-x-2 mt-3"
+          onClick={onOpenSettings}
+        >
+          <ApperIcon name="Settings" size={18} />
+          <span>Settings</span>
+        </Button>
       </div>
     </motion.div>
   )
