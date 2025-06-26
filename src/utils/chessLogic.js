@@ -39,9 +39,10 @@ const isValidPosition = (row, col) => {
 }
 
 // Get all possible moves for a piece at given position
-export const getValidMovesForPiece = (board, row, col, currentPlayer) => {
+// Generate basic moves without check validation (used internally to avoid circular dependency)
+const getBasicMovesForPiece = (board, row, col, color) => {
   const piece = board[row][col]
-  if (!piece || piece.color !== currentPlayer) {
+  if (!piece || piece.color !== color) {
     return []
   }
 
@@ -64,6 +65,18 @@ export const getValidMovesForPiece = (board, row, col, currentPlayer) => {
       moves.push(...getKingMoves(board, row, col, piece.color))
       break
   }
+  
+  return moves
+}
+
+// Public API - generates valid moves with check validation
+export const getValidMovesForPiece = (board, row, col, currentPlayer) => {
+  const piece = board[row][col]
+  if (!piece || piece.color !== currentPlayer) {
+    return []
+  }
+
+  const moves = getBasicMovesForPiece(board, row, col, currentPlayer)
   
   // Filter out moves that would put own king in check
   return moves.filter(move => {
@@ -237,7 +250,8 @@ const isPositionUnderAttack = (board, row, col, attackerColor) => {
     for (let c = 0; c < 5; c++) {
       const piece = board[r][c]
       if (piece && piece.color === attackerColor) {
-        const moves = getValidMovesForPiece(board, r, c, attackerColor)
+        // Use basic moves to avoid circular dependency with check validation
+        const moves = getBasicMovesForPiece(board, r, c, attackerColor)
         if (moves.some(move => move.row === row && move.col === col)) {
           return true
         }
