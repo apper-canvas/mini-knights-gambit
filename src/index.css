@@ -1,0 +1,135 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #1A252F 0%, #2C3E50 100%);
+  min-height: 100vh;
+  color: #ECF0F1;
+  overflow-x: hidden;
+}
+
+.chess-piece {
+  cursor: grab;
+  transition: all 0.2s ease-out;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.chess-piece:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.chess-piece:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.chess-piece.dragging {
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.chess-square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-out;
+}
+
+.chess-square.light {
+  background: linear-gradient(135deg, #ECF0F1 0%, #BDC3C7 100%);
+}
+
+.chess-square.dark {
+  background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+}
+
+.chess-square.selected {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%) !important;
+  box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+}
+
+.chess-square.valid-move::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(46, 204, 113, 0.8);
+  border: 2px solid #27AE60;
+  z-index: 10;
+}
+
+.chess-square.capture-move::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #E74C3C;
+  border-radius: 4px;
+  background: rgba(231, 76, 60, 0.2);
+  z-index: 10;
+}
+
+.in-check {
+  animation: check-pulse 2s infinite;
+}
+
+.Toastify__toast-container {
+  top: 1rem;
+  right: 1rem;
+  width: auto;
+  max-width: 400px;
+}
+
+.Toastify__toast {
+  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+  color: #ECF0F1;
+  border-radius: 8px;
+  border: 1px solid rgba(236, 240, 241, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 12px 16px;
+  min-height: auto;
+}
+
+.Toastify__progress-bar {
+  background: linear-gradient(90deg, #E74C3C 0%, #C0392B 100%);
+}
+
+.Toastify__close-button {
+  color: #BDC3C7;
+  opacity: 0.7;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+@layer components {
+  .premium-button {
+    @apply relative px-6 py-3 bg-gradient-to-r from-accent to-error text-white font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95;
+  }
+  
+  .premium-card {
+    @apply bg-gradient-to-br from-surface to-primary rounded-xl shadow-2xl border border-secondary/10 backdrop-blur-sm;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg;
+  }
+}
